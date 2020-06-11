@@ -3,6 +3,7 @@ const mongoose=require('mongoose')
 const bcrypt=require('bcryptjs')
 const jwt=require('jsonwebtoken')
 
+
 const userSchema =new mongoose.Schema({
     name:{
         type:String,
@@ -49,6 +50,15 @@ const userSchema =new mongoose.Schema({
         }
     }]
 })
+
+//==================================================================
+userSchema.methods.toJSON= function () {
+    user=this
+    const userObject = user.toObject()
+    delete userObject.password
+    delete userObject.tokens
+    return userObject
+}
 //=====================================================================
 userSchema.methods.generateAuthToken=async function (){
     const user=this
