@@ -60,52 +60,50 @@ router.post('/users/logoutall',auth,async (req,res)=>{
 router.get('/users/me',auth,async (req,res)=>{
     res.send(req.ahmed)
 })
+//------------------------------no need now /me it is ok -----------------------------------------------//
+// router.get('/users/:id',async (req,res)=>{
+//     const _id = req.params.id
+//     try {
+//         const userById= await User.findById(_id)
+//         if (!userById) {
+//             return res.status(404).send({error:"no user found"})
+//         } else {
+//             res.status(202).send(userById)
+//         }
+//     } catch (error) {
+//         res.status(500).send(error)
+//     }
+// })
 //-----------------------------------------------------------------------------//
-router.get('/users/:id',async (req,res)=>{
-    const _id = req.params.id
-    try {
-        const userById= await User.findById(_id)
-        if (!userById) {
-            return res.status(404).send({error:"no user found"})
-        } else {
-            res.status(202).send(userById)
-        }
-    } catch (error) {
-        res.status(500).send(error)
-    }
-})
-//-----------------------------------------------------------------------------//
-router.patch('/users/:id',async (req,res)=>{
+router.patch('/users/me',auth,async (req,res)=>{
     const updates = Object.keys(req.body)
+    console.log(updates)
     const allowedUpdates =['name','email','password','age']
     const isValidOperation=updates.every((update) => allowedUpdates.includes(update))
     if (!isValidOperation) {
         return res.status(400).send({error:'not allowed parameter to update'})
     }
     try {
-        const user=await User.findById(req.params.id)
+
+        const user=req.ahmed
         updates.forEach((update)=>{
             user[update]=req.body[update]
         })
         await user.save()
-     
-        // const user= await User.findByIdAndUpdate(req.params.id,req.body,{new:true , runValidators: true })
-        if (!user) {
-            return res.status(404).send({error:'there is no user found '})
-        }
         res.status(202).send(user)
     } catch (error) {
         res.status(500).send({error:'error from catch'})
     }
 })
 //-----------------------------------------------------------------------------//
-router.delete('/users/:id',async (req,res)=>{
+router.delete('/users/me',auth,async (req,res)=>{
     try {
-        const userDelete=await User.findByIdAndDelete(req.params.id)
-        if (!userDelete) {
-            return res.status(404).send({error:'there is no user found to delete '})
-        }
-        res.status(202).send({sucsses:'user was deleted '})
+        // const userDelete=await User.findByIdAndDelete(req.ahmed._id)
+        // if (!userDelete) {
+        //     return res.status(404).send({error:'there is no user found to delete '})
+        // }
+        await req.ahmed.remove()
+        res.status(202).send({sucsses:'user was deleted ',user:req.ahmed})
     } catch (error) {
         res.status(500).send({error:'error from catch'})
     }
