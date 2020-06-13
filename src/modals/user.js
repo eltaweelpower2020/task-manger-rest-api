@@ -2,6 +2,7 @@ const validator =require('validator')
 const mongoose=require('mongoose')
 const bcrypt=require('bcryptjs')
 const jwt=require('jsonwebtoken')
+const Task=require('../modals/task')
 
 
 const userSchema =new mongoose.Schema({
@@ -50,6 +51,12 @@ const userSchema =new mongoose.Schema({
         }
     }]
 })
+//virtual property to link user with all tasks will make tasks array
+userSchema.virtual('tasks',{
+    ref:'Task',
+    localField:'_id',
+    foreignField:'owner'
+})
 
 //==================================================================
 userSchema.methods.toJSON= function () {
@@ -90,7 +97,12 @@ userSchema.statics.findByCredentials = async (email,password)=>{
      }
      next()
  })
-
+//===================delete user task after delete user  ==========
+userSchema.pre('remove',async function (next) {
+    const user=this
+    await Task.deleteMany({owner:user._id})
+    next()
+})
 const User=mongoose.model('User',userSchema)
 
 

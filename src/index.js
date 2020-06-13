@@ -61,3 +61,18 @@ app.use('/',userRouter)
 app.listen(port,()=>{
     console.log('server is up on port :' + port)
 })
+
+
+
+const User=require('./modals/user')
+// const Task=require('./modals/task')
+const main = async ()=>{
+    // const task = await Task.findOne({_id:'5ee36642c90acb2d449a1b5a'})
+    // await task.populate('owner').execPopulate()
+    // console.log(task)
+
+    const user = await User.findById('5ee35730a4855e0d8c9f3f84')
+    await user.populate('tasks').execPopulate()
+    
+}
+main()

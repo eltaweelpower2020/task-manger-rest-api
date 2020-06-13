@@ -84,7 +84,6 @@ router.patch('/users/me',auth,async (req,res)=>{
         return res.status(400).send({error:'not allowed parameter to update'})
     }
     try {
-
         const user=req.ahmed
         updates.forEach((update)=>{
             user[update]=req.body[update]
